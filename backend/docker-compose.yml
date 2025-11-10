@@ -1,0 +1,19 @@
+  backend:
+    build:
+      context: ./terracotta/backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://postgres:postgrespassword@db:5432/terracotta_db
+      PORT: 4000
+      JWT_SECRET: supersecret_jwt_key_change_me
+      ADMIN_EMAIL: admin@terracotta.local
+      ADMIN_PASSWORD: Admin123!
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./terracotta/backend:/app
+    command: sh -c "npm run migrate && npm run start"
